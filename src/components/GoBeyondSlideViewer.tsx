@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useLayoutEffect } from 'react';
 import { 
   ChevronLeft, ChevronRight, Play, Pause, Volume2, VolumeX, 
   Activity, Film, Mic, Music, CheckCircle2, ArrowRight, X, ZoomIn
@@ -10,6 +10,7 @@ import { CircuitNarrativeNavigator } from './CircuitNarrativeNavigator';
 import { PlanningBudgetSection } from './PlanningBudgetSection';
 import { audioSystem } from '../utils/audioSystem';
 import { sound } from '../utils/audio';
+import { scrollToSlideTop } from '../utils/scrollHelper';
 
 /**
  * Custom Silhouette Kart Icon for "LA SIGNATURE KART"
@@ -53,6 +54,15 @@ export const GoBeyondSlideViewer: React.FC = () => {
     return audioSystem.subscribe((st) => setAudioState(st));
   }, []);
 
+  // Always scroll to top when slide changes (essential on mobile)
+  useLayoutEffect(() => {
+    scrollToSlideTop();
+  }, [currentSlideIndex]);
+
+  useEffect(() => {
+    scrollToSlideTop();
+  }, [currentSlideIndex]);
+
   // Keyboard navigation (ArrowLeft / ArrowRight)
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -71,6 +81,7 @@ export const GoBeyondSlideViewer: React.FC = () => {
       sound.playUiClick();
       setCurrentSlideIndex((prev) => prev + 1);
       setIsPlayingFx(false);
+      scrollToSlideTop();
     }
   };
 
@@ -79,6 +90,7 @@ export const GoBeyondSlideViewer: React.FC = () => {
       sound.playUiClick();
       setCurrentSlideIndex((prev) => prev - 1);
       setIsPlayingFx(false);
+      scrollToSlideTop();
     }
   };
 
@@ -86,6 +98,7 @@ export const GoBeyondSlideViewer: React.FC = () => {
     sound.playUiClick();
     setCurrentSlideIndex(idx);
     setIsPlayingFx(false);
+    scrollToSlideTop();
   };
 
   const handleToggleMute = () => {
@@ -102,6 +115,8 @@ export const GoBeyondSlideViewer: React.FC = () => {
 
   return (
     <div className="relative min-h-screen bg-[#07080a] text-white flex flex-col justify-between selection:bg-[#ff1e00] selection:text-white">
+      {/* Invisible anchor target at very top for rock-solid mobile scroll-to-top */}
+      <div id="slide-top-anchor" className="absolute top-0 left-0 w-0 h-0 pointer-events-none opacity-0" aria-hidden="true" />
       
       {/* =========================================================================
           1. TOP MINIMALIST & LIGHT NAVIGATION
@@ -193,10 +208,7 @@ export const GoBeyondSlideViewer: React.FC = () => {
           {/* Quick Jump to Paddock / Budget (Slide 10) */}
           <button
             type="button"
-            onClick={() => {
-              sound.playUiClick();
-              setCurrentSlideIndex(SLIDES.length - 1);
-            }}
+            onClick={() => handleSelectSlide(SLIDES.length - 1)}
             className={`hidden min-[480px]:flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl font-mono text-xs font-bold transition-all -skew-x-6 border cursor-pointer shrink-0 ${
               currentSlideIndex === SLIDES.length - 1
                 ? 'bg-[#ff1e00] text-white border-[#ff1e00] shadow-[0_0_15px_rgba(255,30,0,0.5)]'
