@@ -37,7 +37,7 @@ export function resolveImage(path?: string): string {
 export interface SlideData {
   id: number;
   slideNumber: string;
-  type: 'cover' | 'storyboard';
+  type: 'cover' | 'storyboard' | 'budget';
   title: string;
   subtitle: string;
   tagline?: string;
@@ -78,7 +78,7 @@ export const SLIDES: SlideData[] = [
     subtitle: "DU RÊVE À LA RÉALITÉ",
     tagline: "FILM DE PRÉSENTATION DU FUTUR KARTING INTERNATIONAL",
     activeVerbs: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15],
-    masterCoverImage: "/src/assets/images/master_hero_bki_clean_1791211931679.jpg",
+    masterCoverImage: "/src/assets/images/master_hero_combinaison_1791247080379.jpg",
     manifesto: {
       headline: "Go Beyond : le manifeste",
       quote: "Africafun Production veut démontrer que le Bénin peut produire des films d'une qualité exceptionnelle, irréprochable. De l'illustration au rendu réaliste, toutes les technologies modernes seront réunies.",
@@ -119,8 +119,8 @@ export const SLIDES: SlideData[] = [
       {
         id: "hero_master",
         title: "Go Beyond — Le Karting au Bénin",
-        image: "/src/assets/images/master_hero_bki_clean_1791211931679.jpg",
-        caption: "De l'enfant bâtissant son rêve à la piste internationale sur le littoral béninois"
+        image: "/src/assets/images/master_hero_combinaison_1791247080379.jpg",
+        caption: "Le pilote prodige et l'architecte en combinaison face au futur karting international du Bénin"
       }
     ],
     pillars: [
@@ -284,7 +284,7 @@ export const SLIDES: SlideData[] = [
       {
         id: "p4_hand_kart",
         title: "Le kart en piste sur la maquette",
-        image: "/src/assets/images/concevoir_kart_maquette_1791211566792.jpg",
+        image: "/src/assets/images/architecte_kart_skintone_match_1791245565621.jpg",
         caption: "Simulation du tracé avec le kart #07"
       },
       {
@@ -447,6 +447,39 @@ export const SLIDES: SlideData[] = [
     rythmeSonText: "On respire. La musique atteint son thème complet, puis un dernier silence avant le titre.",
     signatureKartText: "Le moteur s'éteint doucement, comme un kart qui rentre au stand. Sur la montée de grue, une dernière note s'élève comme un rapport enclenché, puis le silence. Le « vroum » de l'enfant revient une seconde : la boucle est bouclée.",
     filRougeSonoreText: "Extinction progressive du moteur, dernière note suspendue et le murmure « vroum » de l'enfant.",
+    audioKey: "07_realite"
+  },
+
+  // SLIDE 10 — PADDOCK & CADRE BUDGÉTAIRE DE PRODUCTION (Appel d'offres KOFFI & DIABATÉ)
+  {
+    id: 10,
+    slideNumber: "10",
+    type: "budget",
+    title: "PADDOCK · BUDGET DE PRODUCTION",
+    subtitle: "OFFRE TECHNIQUE & FINANCIÈRE — AFRIKAFUN / KOFFI & DIABATÉ",
+    quote: "« La rigueur de la méthode et la maîtrise technique au service de l'ambition cinématographique. »",
+    activeVerbs: [14, 15],
+    panels: [
+      {
+        id: "p10_revit",
+        title: "01. Exploitation Revit & DWG",
+        image: "/src/assets/images/dessiner_plan_cad_kd_1791212938094.jpg",
+        caption: "Intégration rigoureuse des données architecturales fournies"
+      },
+      {
+        id: "p10_ai3d",
+        title: "02. Production 3D & IA Photoréaliste",
+        image: "/src/assets/images/racetrack_kart_red_1791213468065.jpg",
+        caption: "Mise en scène haute fidélité avant construction physique"
+      },
+      {
+        id: "p10_master4k",
+        title: "03. Livraison Master 4K UHD",
+        image: "/src/assets/images/circuit_complex_benin_aerial_1791141156073.jpg",
+        caption: "Film cinématographique de commercialisation et d'investissement"
+      }
+    ],
+    filRougeSonoreText: "Le grondement serein des moteurs au paddock après la course : précision technique, télémétrie et engagement officiel.",
     audioKey: "07_realite"
   }
 ];

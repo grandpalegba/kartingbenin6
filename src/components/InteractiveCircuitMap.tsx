@@ -16,7 +16,7 @@ interface CircuitCheckpoint {
   cy: number;
 }
 
-// 9 Stand / Sector Checkpoints positioned strategically along the karting track loop
+// 10 Stand / Sector Checkpoints positioned strategically along the karting track loop
 const CHECKPOINTS: CircuitCheckpoint[] = [
   { id: 0, label: "01 Départ / Go Beyond", short: "S1", cx: 40, cy: 92 },
   { id: 1, label: "02 Rêver · Oser", short: "S2", cx: 80, cy: 92 },
@@ -25,8 +25,9 @@ const CHECKPOINTS: CircuitCheckpoint[] = [
   { id: 4, label: "05 Concevoir · Bâtir", short: "S5", cx: 185, cy: 26 },
   { id: 5, label: "06 S'équiper · Frémir", short: "S6", cx: 140, cy: 15 },
   { id: 6, label: "07 S'engager · Se Dépasser", short: "S7", cx: 95, cy: 38 },
-  { id: 7, label: "08 Rassembler · Vibrer", short: "S8", cx: 50, cy: 22 },
-  { id: 8, label: "09 Transmettre · S'élever", short: "S9", cx: 18, cy: 55 },
+  { id: 7, label: "08 Rassembler · Vibrer", short: "S8", cx: 46, cy: 22 },
+  { id: 8, label: "09 Transmettre · S'élever", short: "S9", cx: 18, cy: 46 },
+  { id: 9, label: "10 Paddock · Budget 🏁", short: "🏁", cx: 24, cy: 76 },
 ];
 
 export const InteractiveCircuitMap: React.FC<InteractiveCircuitMapProps> = ({
@@ -54,15 +55,15 @@ export const InteractiveCircuitMap: React.FC<InteractiveCircuitMapProps> = ({
           <span className="text-white font-bold tracking-wider">CIRCUIT INTERACTIF</span>
         </span>
         <span className="text-[#ff1e00] font-bold">
-          STAND {String(currentSlideIndex + 1).padStart(2, '0')}/09
+          STAND {String(currentSlideIndex + 1).padStart(2, '0')}/{String(CHECKPOINTS.length).padStart(2, '0')}
         </span>
       </div>
 
       {/* SVG Track with 9 Stand Checkpoints */}
-      <div className="relative w-full aspect-[220/110]">
+      <div className="relative w-full aspect-[220/110] overflow-hidden">
         <svg 
           viewBox="0 0 220 110" 
-          className="w-full h-full overflow-visible"
+          className="w-full h-full"
         >
           {/* Track Underlay Outer Border */}
           <path
@@ -120,30 +121,55 @@ export const InteractiveCircuitMap: React.FC<InteractiveCircuitMapProps> = ({
                   />
                 )}
 
-                {/* Base node circle */}
-                <circle
-                  cx={cp.cx}
-                  cy={cp.cy}
-                  r={isActive ? "6" : isHovered ? "5.5" : "4.5"}
-                  fill={isActive ? "#ff1e00" : isHovered ? "#ffffff" : "#1a1c23"}
-                  stroke={isActive ? "#ffffff" : isHovered ? "#ff1e00" : "rgba(255,255,255,0.4)"}
-                  strokeWidth="1.5"
-                  className="transition-all duration-200"
-                />
+                {/* Special Checkered Damier Finish on Stand 10 vs Standard Sector Circles */}
+                {idx === 9 ? (
+                  <g>
+                    {/* Damier outer ring */}
+                    <circle
+                      cx={cp.cx}
+                      cy={cp.cy}
+                      r={isActive ? "7.5" : isHovered ? "7" : "5.5"}
+                      fill="#000000"
+                      stroke={isActive ? "#ff1e00" : isHovered ? "#ffffff" : "#ff1e00"}
+                      strokeWidth={isActive ? "2" : "1.5"}
+                      className="transition-all duration-200"
+                    />
+                    {/* Checkered 4-square grid icon */}
+                    <g transform={`translate(${cp.cx - 3}, ${cp.cy - 3})`} pointerEvents="none">
+                      <rect x="0" y="0" width="3" height="3" fill="#ffffff" />
+                      <rect x="3" y="0" width="3" height="3" fill="#000000" />
+                      <rect x="0" y="3" width="3" height="3" fill="#000000" />
+                      <rect x="3" y="3" width="3" height="3" fill="#ffffff" />
+                    </g>
+                  </g>
+                ) : (
+                  <>
+                    {/* Base node circle */}
+                    <circle
+                      cx={cp.cx}
+                      cy={cp.cy}
+                      r={isActive ? "6" : isHovered ? "5.5" : "4.5"}
+                      fill={isActive ? "#ff1e00" : isHovered ? "#ffffff" : "#1a1c23"}
+                      stroke={isActive ? "#ffffff" : isHovered ? "#ff1e00" : "rgba(255,255,255,0.4)"}
+                      strokeWidth="1.5"
+                      className="transition-all duration-200"
+                    />
 
-                {/* Stand number label inside or near point */}
-                <text
-                  x={cp.cx}
-                  y={cp.cy + 2.8}
-                  textAnchor="middle"
-                  fontSize="5.5"
-                  fontWeight="bold"
-                  fontFamily="monospace"
-                  fill={isActive ? "#ffffff" : isHovered ? "#000000" : "#a1a1aa"}
-                  pointerEvents="none"
-                >
-                  {idx + 1}
-                </text>
+                    {/* Stand number label inside or near point */}
+                    <text
+                      x={cp.cx}
+                      y={cp.cy + 2.8}
+                      textAnchor="middle"
+                      fontSize="5.5"
+                      fontWeight="bold"
+                      fontFamily="monospace"
+                      fill={isActive ? "#ffffff" : isHovered ? "#000000" : "#a1a1aa"}
+                      pointerEvents="none"
+                    >
+                      {idx + 1}
+                    </text>
+                  </>
+                )}
               </g>
             );
           })}
@@ -165,7 +191,7 @@ export const InteractiveCircuitMap: React.FC<InteractiveCircuitMapProps> = ({
           {displayedHover.label}
         </span>
         <span className="text-[#ff1e00] font-bold shrink-0">
-          CLIQUER LE STAND
+          CHOISIR UN STAND
         </span>
       </div>
 

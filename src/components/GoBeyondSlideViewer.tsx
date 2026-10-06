@@ -6,6 +6,8 @@ import {
 import { SLIDES, SlideData, resolveImage } from '../data/slidesData';
 import { SIXTEEN_VERBS } from '../data/dossier16PagesData';
 import { InteractiveCircuitMap } from './InteractiveCircuitMap';
+import { CircuitNarrativeNavigator } from './CircuitNarrativeNavigator';
+import { PlanningBudgetSection } from './PlanningBudgetSection';
 import { audioSystem } from '../utils/audioSystem';
 import { sound } from '../utils/audio';
 
@@ -188,6 +190,24 @@ export const GoBeyondSlideViewer: React.FC = () => {
             </button>
           </div>
 
+          {/* Quick Jump to Paddock / Budget (Slide 10) */}
+          <button
+            type="button"
+            onClick={() => {
+              sound.playUiClick();
+              setCurrentSlideIndex(SLIDES.length - 1);
+            }}
+            className={`hidden min-[480px]:flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl font-mono text-xs font-bold transition-all -skew-x-6 border cursor-pointer shrink-0 ${
+              currentSlideIndex === SLIDES.length - 1
+                ? 'bg-[#ff1e00] text-white border-[#ff1e00] shadow-[0_0_15px_rgba(255,30,0,0.5)]'
+                : 'bg-white/5 hover:bg-white/10 text-neutral-300 hover:text-white border-white/15 hover:border-[#ff1e00]/50'
+            }`}
+            title="Accéder directement au Budget & Paddock (Page 10)"
+          >
+            <span className="text-[11px]">🏁</span>
+            <span>BUDGET</span>
+          </button>
+
           {/* Sound Controls - Always 100% visible on mobile */}
           <div className="flex items-center gap-1 sm:gap-2 shrink-0">
             {/* Écouter button in header */}
@@ -229,7 +249,7 @@ export const GoBeyondSlideViewer: React.FC = () => {
       {/* =========================================================================
           2. SLIDE CONTENT CANVAS
           ========================================================================= */}
-      <main className="flex-1 max-w-6xl mx-auto w-full px-4 sm:px-8 py-6 flex flex-col justify-between space-y-6">
+      <main className="flex-1 max-w-6xl mx-auto w-full min-w-0 px-3 sm:px-8 py-4 sm:py-6 flex flex-col space-y-6">
         
         {/* Sequence Title Bar & Interactive Circuit Map */}
         <div>
@@ -267,9 +287,14 @@ export const GoBeyondSlideViewer: React.FC = () => {
               </div>
             </div>
           ) : (
-            /* SLIDES 02-09: JUST THE SEQUENCE NAME, QUOTE & CIRCUIT ON THE RIGHT */
+            /* SLIDES 02-10: SEQUENCE/STAND NAME, QUOTE & CIRCUIT ON THE RIGHT */
             <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 border-b border-white/10 pb-5">
               <div className="space-y-2 max-w-xl">
+                <div className="flex items-center gap-2">
+                  <span className="font-mono text-xs text-[#ff1e00] font-bold uppercase tracking-wider">
+                    {currentSlide.subtitle}
+                  </span>
+                </div>
                 <h1 className="font-display font-black text-2xl min-[360px]:text-3xl sm:text-5xl text-white tracking-tight uppercase break-words">
                   {currentSlide.title}
                 </h1>
@@ -295,7 +320,7 @@ export const GoBeyondSlideViewer: React.FC = () => {
         {/* =========================================================================
             3. VISUEL PRINCIPAL DE LA PAGE
             - SLIDE 01: L'affiche / composition maîtresse complète (remplace les 4 images)
-            - SLIDES 02-09: Les trois images fondamentales du chapitre
+            - SLIDES 02-10: Les trois images fondamentales du chapitre
             ========================================================================= */}
         <div>
           {currentSlide.type === 'cover' ? (
@@ -337,7 +362,7 @@ export const GoBeyondSlideViewer: React.FC = () => {
               </div>
             </div>
           ) : (
-            /* SLIDES 02-09: LES TROIS IMAGES FONDAMENTALES DU CHAPITRE (16/9 NATIF SANS MASQUAGE) */
+            /* SLIDES 02-10: LES TROIS IMAGES FONDAMENTALES DU CHAPITRE (16/9 NATIF SANS MASQUAGE) */
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               {currentSlide.panels.map((panel) => {
                 const resolvedSrc = resolveImage(panel.image);
@@ -390,104 +415,109 @@ export const GoBeyondSlideViewer: React.FC = () => {
         </div>
 
         {/* =========================================================================
-            4. FOND BLANC ÉLÉGANT (RESPIRATION ÉDITORIALE)
+            4. CONTENU ÉDITORIAL & SCÉNARISTIQUE
+            - SLIDE 10 : CADRE CONTRACTUEL & BUDGET OFFICIEL (PLANNING & BUDGET)
+            - SLIDE 01 (ACCUEIL) : MANIFESTE « GO BEYOND » + 4 PILIERS EN THÈME SOMBRE RACING (ZÉRO PANNEAU BLANC)
+            - SLIDES 02-09 : FICHE SCRIPT DE TOURNAGE BLANCHE POUR LES 3 COLONNES
             ========================================================================= */}
-        <div className="rounded-2xl bg-white text-neutral-900 p-6 sm:p-8 shadow-2xl border border-neutral-200">
-          {currentSlide.pillars ? (
-            /* SLIDE 01: MANIFESTE « GO BEYOND » + LES 4 PILIERS REDESSINÉS */
-            <div className="space-y-8">
-              
-              {/* SECTION A : CE QUE SIGNIFIE « GO BEYOND » (LE MANIFESTE) */}
-              <div className="p-6 sm:p-7 rounded-2xl bg-[#090b0e] text-white border border-neutral-800 shadow-xl relative overflow-hidden">
-                <div className="absolute -right-12 -bottom-12 w-56 h-56 bg-[#ff1e00]/15 rounded-full blur-3xl pointer-events-none" />
-                
-                <div className="flex flex-col md:flex-row md:items-start justify-between gap-4 border-b border-white/10 pb-4 mb-5">
-                  <div>
-                    <h3 className="font-display italic font-black text-xl min-[360px]:text-2xl sm:text-3xl text-white tracking-tight uppercase break-words">
-                      {currentSlide.manifesto?.headline || "Go Beyond : le manifeste"}
-                    </h3>
+        {currentSlide.type === 'budget' ? (
+          <PlanningBudgetSection />
+        ) : currentSlide.pillars ? (
+          <>
+            {/* SLIDE 01 (PAGE D'ACCUEIL) : SECTION A : MANIFESTE « GO BEYOND » (DARK RACING THEME) */}
+            <div className="w-full rounded-2xl bg-[#090b0e] text-white p-4 sm:p-7 shadow-2xl border border-white/10 space-y-4">
+              <div className="w-full border-b border-white/10 pb-4">
+                <h3 className="font-display italic font-black text-xl sm:text-2xl text-white tracking-tight uppercase text-left">
+                  {currentSlide.manifesto?.headline || "Go Beyond : le manifeste"}
+                </h3>
+
+                {currentSlide.manifesto?.quote && (
+                  <p className="mt-2.5 text-xs sm:text-sm text-neutral-300 border-l-2 border-[#ff1e00] pl-3.5 font-sans leading-relaxed text-left">
+                    {currentSlide.manifesto.quote}
+                  </p>
+                )}
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 text-xs font-sans">
+                {currentSlide.manifesto?.points.map((pt, idx) => (
+                  <div 
+                    key={pt.title}
+                    className="p-4 rounded-xl bg-white/5 border border-white/10 space-y-2 hover:border-[#ff1e00]/40 transition-colors flex flex-col justify-between"
+                  >
+                    <div>
+                      <div className="flex items-center justify-between mb-1.5">
+                        <span className="font-mono text-[#ff1e00] font-bold uppercase text-[11px] tracking-wider">
+                          {pt.num || `0${idx + 1}`}
+                        </span>
+                        <span className="w-1.5 h-1.5 rounded-full bg-[#ff1e00]/60" />
+                      </div>
+                      <h4 className="font-display font-bold text-white uppercase text-sm mb-1.5 tracking-tight">
+                        {pt.title}
+                      </h4>
+                      <p className="text-neutral-300 leading-relaxed font-light text-[12px]">
+                        {pt.text}
+                      </p>
+                    </div>
                   </div>
-
-                  {currentSlide.manifesto?.quote && (
-                    <div className="text-xs sm:text-sm text-neutral-200 border-l-2 border-[#ff1e00] pl-3.5 max-w-lg font-sans leading-relaxed">
-                      {currentSlide.manifesto.quote}
-                    </div>
-                  )}
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 text-xs font-sans">
-                  {currentSlide.manifesto?.points.map((pt, idx) => (
-                    <div 
-                      key={pt.title}
-                      className="p-4 rounded-xl bg-white/5 border border-white/10 space-y-2 hover:border-[#ff1e00]/40 transition-colors flex flex-col justify-between"
-                    >
-                      <div>
-                        <div className="flex items-center justify-between mb-1.5">
-                          <span className="font-mono text-[#ff1e00] font-bold uppercase text-[11px] tracking-wider">
-                            {pt.num || `0${idx + 1}`}
-                          </span>
-                          <span className="w-1.5 h-1.5 rounded-full bg-[#ff1e00]/60" />
-                        </div>
-                        <h4 className="font-display font-bold text-white uppercase text-sm mb-1.5 tracking-tight">
-                          {pt.title}
-                        </h4>
-                        <p className="text-neutral-300 leading-relaxed font-light text-[12px]">
-                          {pt.text}
-                        </p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
+                ))}
               </div>
-
-              {/* SECTION B : LES QUATRE PILIERS DU RÉCIT */}
-              <div>
-                <div className="flex items-center justify-between border-b border-neutral-200 pb-3 mb-5">
-                  <span className="font-mono text-xs text-[#ff1e00] font-bold uppercase tracking-widest">
-                    LES QUATRE PILIERS DU RÉCIT CINÉMATOGRAPHIQUE
-                  </span>
-                  <span className="text-[11px] font-mono text-neutral-400">STRUCTURE SCÉNARISTIQUE</span>
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-5">
-                  {currentSlide.pillars.map((pil) => (
-                    <div 
-                      key={pil.num} 
-                      className="p-4 sm:p-5 rounded-xl bg-neutral-50 border border-neutral-200 flex flex-col justify-between space-y-3 hover:border-[#ff1e00]/50 transition-all shadow-sm"
-                    >
-                      <div className="space-y-2.5">
-                        <div className="flex items-center justify-between">
-                          <span className="w-7 h-7 rounded-full bg-[#ff1e00]/10 text-[#ff1e00] flex items-center justify-center font-mono font-bold text-xs">
-                            0{pil.num}
-                          </span>
-                          <span className="text-[10px] font-mono text-neutral-400 uppercase tracking-wider">
-                            PILIER {pil.num}
-                          </span>
-                        </div>
-
-                        {/* Typographie corrigée : nette, compacte, sans chevauchement */}
-                        <h4 className="font-sans font-bold text-xs sm:text-[13px] text-neutral-900 leading-snug">
-                          {pil.title}
-                        </h4>
-
-                        <div className="text-[10px] font-mono text-[#ff1e00] font-semibold leading-relaxed">
-                          {pil.verbs}
-                        </div>
-
-                        <p className="text-[11px] text-neutral-600 font-sans leading-relaxed">
-                          {pil.desc}
-                        </p>
-                      </div>
-
-                      <div className="h-0.5 w-8 bg-[#ff1e00] pt-1" />
-                    </div>
-                  ))}
-                </div>
-              </div>
-
             </div>
-          ) : (
-            /* SLIDES 02-09: STORY SCRIPT ANALYSIS ON CRISP WHITE */
+
+            {/* SLIDE 01 (PAGE D'ACCUEIL) : SECTION INTERMÉDIAIRE : LE TRACÉ DU CIRCUIT & NAVIGATION PAR LES VERBES D'ACTION AVEC DAMIER */}
+            <CircuitNarrativeNavigator
+              onSelectSlide={handleSelectSlide}
+              currentSlideIndex={currentSlideIndex}
+            />
+
+            {/* SLIDE 01 (PAGE D'ACCUEIL) : SECTION B : LES QUATRE PILIERS DU RÉCIT (FOND BLANC ÉLÉGANT & RESPIRATION ÉDITORIALE) */}
+            <div className="w-full rounded-2xl bg-white text-neutral-900 p-5 sm:p-8 shadow-2xl border border-neutral-200">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1.5 border-b border-neutral-200 pb-3 mb-5">
+                <span className="font-mono text-xs text-[#ff1e00] font-bold uppercase tracking-widest">
+                  LES QUATRE PILIERS DU RÉCIT CINÉMATOGRAPHIQUE
+                </span>
+                <span className="text-[11px] font-mono text-neutral-500 uppercase tracking-wider">
+                  STRUCTURE SCÉNARISTIQUE
+                </span>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-5">
+                {currentSlide.pillars.map((pil) => (
+                  <div 
+                    key={pil.num} 
+                    className="p-4 sm:p-5 rounded-xl bg-neutral-50 border border-neutral-200 hover:border-[#ff1e00]/50 hover:bg-white hover:shadow-md transition-all flex flex-col justify-between space-y-3"
+                  >
+                    <div className="space-y-2.5">
+                      <div className="flex items-center justify-between">
+                        <span className="w-7 h-7 rounded-full bg-[#ff1e00]/10 text-[#ff1e00] flex items-center justify-center font-mono font-bold text-xs">
+                          0{pil.num}
+                        </span>
+                        <span className="text-[10px] font-mono text-neutral-400 uppercase tracking-wider font-semibold">
+                          PILIER {pil.num}
+                        </span>
+                      </div>
+
+                      <h4 className="font-sans font-bold text-xs sm:text-[13px] text-neutral-900 leading-snug">
+                        {pil.title}
+                      </h4>
+
+                      <div className="text-[10px] font-mono text-[#ff1e00] font-semibold leading-relaxed">
+                        {pil.verbs}
+                      </div>
+
+                      <p className="text-[11px] text-neutral-600 font-sans leading-relaxed">
+                        {pil.desc}
+                      </p>
+                    </div>
+
+                    <div className="h-0.5 w-8 bg-[#ff1e00] pt-1" />
+                  </div>
+                ))}
+              </div>
+            </div>
+          </>
+        ) : (
+          /* SLIDES 02-09: STORY SCRIPT ANALYSIS ON CRISP WHITE */
+          <div className="rounded-2xl bg-white text-neutral-900 p-6 sm:p-8 shadow-2xl border border-neutral-200">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 font-sans text-xs">
               <div className="space-y-2">
                 <div className="flex items-center gap-2">
@@ -534,80 +564,83 @@ export const GoBeyondSlideViewer: React.FC = () => {
                 <div className="h-0.5 w-8 bg-[#ff1e00] mt-2" />
               </div>
             </div>
-          )}
-        </div>
+          </div>
+        )}
 
         {/* =========================================================================
             5. DUAL MOTORSPORT BLOCKS (SIGNATURE KART & FIL ROUGE SONORE QUI DONNE ENVIE)
+            - Masqué sur la Slide 10 (Budget) pour laisser toute la place au cadre financier
             ========================================================================= */}
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-4">
-          
-          {/* Card 1: LA SIGNATURE KART (WITH KART ICON) */}
-          <div className="md:col-span-5 p-5 rounded-xl bg-white/3 border border-white/10 space-y-2 relative">
-            <div className="flex items-center gap-2 text-white font-display font-black text-sm uppercase">
-              <KartIcon className="w-4 h-4 text-[#ff1e00]" />
-              <span>LA SIGNATURE KART</span>
-            </div>
-            <div className="h-0.5 w-8 bg-[#ff1e00]" />
-            <p className="text-xs text-neutral-300 leading-relaxed font-sans font-light">
-              {currentSlide.signatureKartText}
-            </p>
-          </div>
-
-          {/* Card 2: FIL ROUGE SONORE (EXPÉRIENCE AUDIO IMMERSIVE) */}
-          <div className="md:col-span-7 p-5 rounded-xl bg-black border border-white/20 space-y-3 relative shadow-2xl">
-            <div className="flex items-center justify-between gap-3">
-              <div className="flex items-center gap-2 text-[#ff1e00] font-display font-black text-sm uppercase">
-                <Activity className={`w-4 h-4 text-[#ff1e00] ${isPlayingFx ? 'animate-bounce' : 'animate-pulse'}`} />
-                <span>FIL ROUGE SONORE</span>
+        {currentSlide.type !== 'budget' && (
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-4">
+            
+            {/* Card 1: LA SIGNATURE KART (WITH KART ICON) */}
+            <div className="md:col-span-5 p-5 rounded-xl bg-white/3 border border-white/10 space-y-2 relative">
+              <div className="flex items-center gap-2 text-white font-display font-black text-sm uppercase">
+                <KartIcon className="w-4 h-4 text-[#ff1e00]" />
+                <span>LA SIGNATURE KART</span>
               </div>
-
-              {/* Interactive Sound Trigger Button (No white background) */}
-              <button
-                type="button"
-                onClick={handleTriggerFilRougeSound}
-                className={`px-3.5 py-1.5 rounded-lg text-xs font-mono font-bold tracking-wider transition-all flex items-center gap-2 border ${
-                  isPlayingFx 
-                    ? 'bg-[#ff1e00] text-white border-[#ff1e00] shadow-[#ff1e00]/50 animate-pulse' 
-                    : 'bg-white/10 hover:bg-[#ff1e00] text-neutral-200 hover:text-white border-white/20 hover:border-[#ff1e00]'
-                }`}
-                title="Lancer l'immersion sonore de ce chapitre"
-              >
-                {isPlayingFx ? (
-                  <>
-                    <Activity className="w-3.5 h-3.5 animate-spin" />
-                    <span>IMMERSION...</span>
-                  </>
-                ) : (
-                  <>
-                    <Volume2 className="w-3.5 h-3.5 text-[#ff1e00]" />
-                    <span>ÉCOUTER</span>
-                  </>
-                )}
-              </button>
+              <div className="h-0.5 w-8 bg-[#ff1e00]" />
+              <p className="text-xs text-neutral-300 leading-relaxed font-sans font-light">
+                {currentSlide.signatureKartText}
+              </p>
             </div>
 
-            <div className="h-0.5 w-8 bg-[#ff1e00]" />
+            {/* Card 2: FIL ROUGE SONORE (EXPÉRIENCE AUDIO IMMERSIVE) */}
+            <div className="md:col-span-7 p-5 rounded-xl bg-black border border-white/20 space-y-3 relative shadow-2xl">
+              <div className="flex items-center justify-between gap-3">
+                <div className="flex items-center gap-2 text-[#ff1e00] font-display font-black text-sm uppercase">
+                  <Activity className={`w-4 h-4 text-[#ff1e00] ${isPlayingFx ? 'animate-bounce' : 'animate-pulse'}`} />
+                  <span>FIL ROUGE SONORE</span>
+                </div>
 
-            {/* Pulsing Audio Waveform when active */}
-            {isPlayingFx && (
-              <div className="flex items-center gap-1 h-6 py-1 bg-white/5 rounded-lg px-3 border border-[#ff1e00]/30">
-                {[35, 75, 25, 95, 55, 100, 70, 45, 90, 65, 40, 80, 60, 85, 30, 95, 50, 70, 40, 85].map((h, i) => (
-                  <div 
-                    key={i} 
-                    className="flex-1 bg-[#ff1e00] rounded-full animate-pulse" 
-                    style={{ height: `${h}%`, animationDelay: `${i * 45}ms` }} 
-                  />
-                ))}
+                {/* Interactive Sound Trigger Button (No white background) */}
+                <button
+                  type="button"
+                  onClick={handleTriggerFilRougeSound}
+                  className={`px-3.5 py-1.5 rounded-lg text-xs font-mono font-bold tracking-wider transition-all flex items-center gap-2 border ${
+                    isPlayingFx 
+                      ? 'bg-[#ff1e00] text-white border-[#ff1e00] shadow-[#ff1e00]/50 animate-pulse' 
+                      : 'bg-white/10 hover:bg-[#ff1e00] text-neutral-200 hover:text-white border-white/20 hover:border-[#ff1e00]'
+                  }`}
+                  title="Lancer l'immersion sonore de ce chapitre"
+                >
+                  {isPlayingFx ? (
+                    <>
+                      <Activity className="w-3.5 h-3.5 animate-spin" />
+                      <span>IMMERSION...</span>
+                    </>
+                  ) : (
+                    <>
+                      <Volume2 className="w-3.5 h-3.5 text-[#ff1e00]" />
+                      <span>ÉCOUTER</span>
+                    </>
+                  )}
+                </button>
               </div>
-            )}
 
-            <p className="text-xs text-neutral-300 leading-relaxed font-sans font-light">
-              {currentSlide.filRougeSonoreText}
-            </p>
+              <div className="h-0.5 w-8 bg-[#ff1e00]" />
+
+              {/* Pulsing Audio Waveform when active */}
+              {isPlayingFx && (
+                <div className="flex items-center gap-1 h-6 py-1 bg-white/5 rounded-lg px-3 border border-[#ff1e00]/30">
+                  {[35, 75, 25, 95, 55, 100, 70, 45, 90, 65, 40, 80, 60, 85, 30, 95, 50, 70, 40, 85].map((h, i) => (
+                    <div 
+                      key={i} 
+                      className="flex-1 bg-[#ff1e00] rounded-full animate-pulse" 
+                      style={{ height: `${h}%`, animationDelay: `${i * 45}ms` }} 
+                    />
+                  ))}
+                </div>
+              )}
+
+              <p className="text-xs text-neutral-300 leading-relaxed font-sans font-light">
+                {currentSlide.filRougeSonoreText}
+              </p>
+            </div>
+
           </div>
-
-        </div>
+        )}
 
       </main>
 
